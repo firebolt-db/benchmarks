@@ -75,7 +75,7 @@ python -m src.main <benchmark_name> --vendors <vendor1,vendor2,...> [--execute-s
 ### Example
 
 ```bash
-python -m src.main my_benchmark --vendors snowflake,firebolt --execute-setup True
+python -m src.main my_benchmark --vendors snowflake,firebolt --execute-setup
 ```
 
 ## Flexibility in SQL File Usage

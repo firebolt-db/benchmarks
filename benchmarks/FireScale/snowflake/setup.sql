@@ -97,3 +97,17 @@ COPY INTO SEARCHWORDS
 FROM @dataapp1tbSEARCHWORDS
 FILE_FORMAT = (TYPE = 'PARQUET')
 MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
+
+CREATE MATERIALIZED VIEW idx_by_day AS
+SELECT
+  visitdate,
+  countrycode,
+  languagecode,
+  useragent,
+  MAX(visitdate) AS max_date,
+  SUM(adrevenue) AS sum_adrevenue,
+  MAX(adrevenue) AS max_adrevenue,
+  COUNT(*)
+FROM uservisits
+GROUP BY visitdate, countrycode, languagecode, useragent
+ORDER BY visitdate, countrycode, languagecode, useragent;
