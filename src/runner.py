@@ -234,7 +234,7 @@ class BenchmarkRunner:
                 self.connection_pools[vendor] = ConnectionPool(
                     vendor,
                     self.credentials[vendor],
-                    self.pool_size
+                    100 #self.pool_size
                 )
                 print("Connections")
                 print(list(self.connection_pools[vendor].connections.queue))
