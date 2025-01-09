@@ -32,17 +32,23 @@ class QueryResult:
     query_name: Optional[str] = None
 
 class ConnectionPool:
-    def __init__(self, connector, credentials: Dict, pool_size: int = 5):
-        self.connector = connector
+    def __init__(self, vendor, credentials: Dict, pool_size: int = 5):
+        self.vendor = vendor
         self.credentials = credentials
         self.pool_size = pool_size
         self.connections = Queue(maxsize=pool_size)
         self._lock = threading.Lock()
+        self.connector_map = {
+            'snowflake': SnowflakeConnector,
+            'firebolt': FireboltConnector,
+            'bigquery': BigQueryConnector,
+            'redshift': RedshiftConnector
+        } 
         self._fill_pool()
-
+       
     def _fill_pool(self):
         for _ in range(self.pool_size):
-            connector = self.connector
+            connector = self.connector_map[self.vendor](config=self.credentials)
             connector.connect()
             self.connections.put(connector)
 
@@ -63,7 +69,7 @@ class BenchmarkRunner:
         benchmark_name: str,
         creds_file: str,
         vendors: List[str] = None,
-        pool_size: int = 5,
+        pool_size: int = 100,
         concurrency: int = 1,
         output_dir: str = 'benchmark_results',
         execute_setup: bool = False,
@@ -226,11 +232,12 @@ class BenchmarkRunner:
 
             try:
                 self.connection_pools[vendor] = ConnectionPool(
-                    self.connectors[vendor],
+                    vendor,
                     self.credentials[vendor],
                     self.pool_size
                 )
-
+                print("Connections")
+                print(list(self.connection_pools[vendor].connections.queue))
                 # Load the appropriate benchmark SQL file for the vendor
                 benchmark_file = self._get_sql_file(vendor, 'benchmark')
                 benchmark_queries = self._load_queries(benchmark_file)
