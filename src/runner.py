@@ -42,7 +42,8 @@ class ConnectionPool:
 
     def _fill_pool(self):
         for _ in range(self.pool_size):
-            connector = self.connector
+            # Create a new connector instance for each connection
+            connector = self.connector.__class__(config=self.credentials)
             connector.connect()
             self.connections.put(connector)
 
@@ -264,13 +265,13 @@ class BenchmarkRunner:
                     for result in vendor_results
                 ]
 
-                self.connection_pools[vendor].close_all()
-
             except Exception as e:
                 self.logger.error(f"Error running benchmark for {vendor}: {str(e)}")
                 csv_data = []
             finally:
-                self.connectors[vendor].close()  # Ensure proper cleanup
+                 # Ensure proper cleanup
+                self.connection_pools[vendor].close_all()
+                self.connectors[vendor].close() 
 
             return vendor, csv_data
 
