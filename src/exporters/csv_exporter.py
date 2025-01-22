@@ -12,7 +12,7 @@ class CSVExporter(BenchmarkExporter):
         
         rows = []
         with open(csv_file_path, mode='w', newline='') as csv_file:
-            fieldnames = ['vendor', 'query_name', 'execution_time', 'concurrent_run', 'success', 'error']
+            fieldnames = ['vendor', 'query_name', 'execution_time', 'start_time', 'finish_time', 'concurrent_run', 'success', 'error']
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
             writer.writeheader()
@@ -22,6 +22,8 @@ class CSVExporter(BenchmarkExporter):
                         'vendor': result['vendor'],
                         'query_name': result['query_name'],
                         'execution_time': result['execution_time'],
+                        'start_time': result['start_time'],
+                        'finish_time': result['finish_time'],
                         'concurrent_run': result['concurrent_run'],
                         'success': result['success'],
                         'error': result['error'] or ''

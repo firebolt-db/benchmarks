@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import random
 import time
 from datetime import datetime
 import os
@@ -25,6 +26,8 @@ ITERATIONS_PER_QUERY = 5
 class QueryResult:
     query_number: int
     execution_time: float
+    start_time: str
+    finish_time: str
     concurrent_run: int
     success: bool
     error: Optional[str] = None
@@ -145,6 +148,7 @@ class BenchmarkRunner:
     def _run_query(self, vendor: str, query_name: str, query: str, concurrent_run: int) -> Dict[str, Any]:
         """Execute a single query and return its results."""
         start_time = time.time()
+        start_time_str =  datetime.now().isoformat()
         try:
             # Acquire a connection from the pool
             connection = self.connection_pools[vendor].get_connection()
@@ -155,9 +159,10 @@ class BenchmarkRunner:
                 'vendor': vendor,
                 'query_name': query_name,
                 'duration': duration,
+                'start_time': start_time_str,
                 'rows': len(results) if results else 0,
                 'status': 'success',
-                'timestamp': datetime.now().isoformat(),
+                'finish_time': datetime.now().isoformat(),
                 'concurrent_run': concurrent_run
             }
         except Exception as e:
@@ -166,10 +171,11 @@ class BenchmarkRunner:
                 'vendor': vendor,
                 'query_name': query_name,
                 'duration': time.time() - start_time,
+                'start_time': start_time_str,
                 'rows': 0,
                 'status': 'error',
                 'error': str(e),
-                'timestamp': datetime.now().isoformat(),
+                'finish_time': datetime.now().isoformat(),
                 'concurrent_run': concurrent_run
             }
         finally:
@@ -180,14 +186,21 @@ class BenchmarkRunner:
         """Run a query concurrently and return the results."""
         results = []
         with ThreadPoolExecutor(max_workers=self.concurrency) as executor:
-            future_to_query = {executor.submit(self._run_query, vendor, query_number, query, i+1): query for i in range(self.concurrency)}
-            
+            # future_to_query = {executor.submit(self._run_query, vendor, query_number, query, i+1): query for i in range(self.concurrency)}
+            future_to_query = {}
+            for i in range(self.concurrency):
+                # Introduce a random delay between 0 and 100 milliseconds
+                time.sleep(random.uniform(0, 0.1))
+                future = executor.submit(self._run_query, vendor, query_number, query, i+1)
+                future_to_query[future] = query
             for future in as_completed(future_to_query):
                 try:
                     result = future.result()
                     results.append(QueryResult(
                         query_number=query_number,
                         execution_time=result['duration'],
+                        start_time=result['start_time'],
+                        finish_time=result['finish_time'],
                         success=result['status'] == 'success',
                         error=result.get('error'),
                         vendor=result['vendor'],
@@ -228,7 +241,7 @@ class BenchmarkRunner:
                     self.logger.warning("Skipping benchmark due to setup failure.")
                     return vendor, []
 
-            vendor_results = []
+            vendor_results:List[QueryResult] = []
 
             try:
                 self.connection_pools[vendor] = ConnectionPool(
@@ -258,6 +271,8 @@ class BenchmarkRunner:
                         'vendor': result.vendor,
                         'query_name': result.query_name,
                         'execution_time': result.execution_time,
+                        'start_time': result.start_time,
+                        'finish_time': result.finish_time,
                         'concurrent_run': result.concurrent_run,
                         'success': result.success,
                         'error': result.error
