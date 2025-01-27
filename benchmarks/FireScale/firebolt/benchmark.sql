@@ -5,9 +5,9 @@
 -- query 1
 SELECT visitdate, sourceip, adrevenue 
 FROM uservisits 
-WHERE (visitdate BETWEEN '1982-10-05' AND '1982-10-19')
-AND sourceip IN ('71.66.154.126')
-AND countrycode = 'EGY';
+WHERE (visitdate BETWEEN '2022-04-10' AND '2022-04-24')
+AND sourceip IN ('9.232.65.46')
+AND countrycode = 'ISL';
 
 -- query 2
 with desktop as ( 
@@ -21,10 +21,10 @@ with desktop as (
             max(length(searchword)) as searchwordlength,
             sum(duration) as time_on_site
             from uservisits
-            where sourceip in ('99.99.96.94')
+            where sourceip in ('99.99.39.185')
             and countrycode < 'zzz'
-            and visitdate between '1980-02-17' and '1980-02-22'
-            and useragent = 'Nddrtrgdepophmckxlcp/2.8'
+            and visitdate between '2023-07-21' and '2023-07-26'
+            and useragent = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)'
             group by sourceip,countrycode,year_month_day), 
  mobile as (
             select 
@@ -37,10 +37,10 @@ with desktop as (
             max(length(searchword)) as searchwordlength,
             sum(duration) as time_on_site
             from uservisits
-            where sourceip in ('1.0.108.16')
+            where sourceip in ('1.0.100.18')
             and countrycode < 'zzz'
-            and visitdate between '1980-02-17' and '1980-02-22'
-            and useragent = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'
+            and visitdate between '2023-07-21' and '2023-07-26'
+            and useragent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 13 like Mac OS X) AppleWebKit/958 (KHTML, like Gecko) Version/25.55 Mobile/15E148 Safari/815'
             group by sourceip,countrycode,year_month_day)
 select 
     COALESCE(desktop.year_month_day,mobile.year_month_day) as year_month_day,
@@ -61,18 +61,18 @@ SELECT languagecode,
     MAX(visitdate) AS visitdate,
     ARRAY_JOIN(ARRAY_AGG(countrycode), ',') AS countrycode
 FROM uservisits
-WHERE sourceip = '23.232.221.175' and visitdate between '1982-10-05' and '1982-10-06'
+WHERE sourceip = '61.57.9.153' and visitdate between '2023-07-03' and '2023-07-04'
 GROUP BY languagecode;
 
 -- query 4
 SELECT *
 FROM uservisits
-WHERE sourceip = '222.63.178.183' and visitdate between '1982-10-05' and '1982-10-06';
+WHERE sourceip = '95.184.141.191' and visitdate between '2022-08-03' and '2022-08-04';
 
 -- query 5
 WITH filtered_uservisits AS( SELECT *     
   FROM uservisits     
-  WHERE visitdate between '1970-01-01' and '1970-01-02') 
+  WHERE visitdate between '2023-05-18' and '2023-05-19') 
   SELECT allowed_records.destinationurl, COUNT(*) OVER () as total_uservisits_count 
   FROM filtered_uservisits JOIN ( SELECT destinationurl 
                                 FROM filtered_uservisits 
@@ -80,12 +80,12 @@ WITH filtered_uservisits AS( SELECT *
   ORDER BY adrevenue desc LIMIT 20 OFFSET 0;
 
 -- query 6
-SELECT COUNT(*) as c FROM uservisits WHERE sourceip = '52.102.108.201' and visitdate = '1971-09-03';
+SELECT COUNT(*) as c FROM uservisits WHERE sourceip = '199.207.100.14' and visitdate = '2022-11-21';
 
 -- query 7
 SELECT max(visitdate) as latest_visit
 FROM uservisits
-WHERE (visitdate >= '1971-09-03' AND visitdate <= DATE_ADD('DAY', 1, '1971-09-03'));
+WHERE (visitdate >= '2021-03-24' AND visitdate <= DATE_ADD('DAY', 1, '2021-03-24'));
 
 -- query 8
 SELECT date_trunc('month', visitdate) as year_month_day,
@@ -93,15 +93,15 @@ COALESCE(SUM(duration), 0) as installs,
 COALESCE(SUM(length(searchword)), 0) as billingCost,
 SUM(CASE WHEN adrevenue <= 1.5 THEN duration ELSE 0 END) as revenueD7
 FROM uservisits
-WHERE (visitdate >= '1971-09-03' AND visitdate <= DATE_ADD('DAY', 1, '1971-09-03'))
-        AND languagecode IN ('PER-ES','ARG-ES','SGP-ZH','CRI-ES','NZL-EN','GRC-DE','PER-ES','SVN-SL')
+WHERE (visitdate >= '2022-10-06' AND visitdate <= DATE_ADD('DAY', 1, '2022-10-06'))
+        AND languagecode IN ('CYP-EL', 'SGP-EN', 'BIH-SR', 'ROU-RO', 'CHL-ES', 'MKD-MK', 'ISR-IW')
 GROUP BY 1
 ORDER BY 1;
 
 -- query 9
 SELECT destinationurl
 from uservisits
-where adrevenue between 0.15833622633632996 and 0.9281767108678773 and visitdate between '1970-01-01' and '1970-01-07'
+where adrevenue between 0.11934252957541426 and 0.29931052288731086 and visitdate between '2024-09-06' and '2024-09-12'
 group by destinationurl having count(*) > 100;
 
 -- query 10
@@ -110,7 +110,7 @@ with busiest_days as (
   from uservisits
   group by 1
   order by 2 desc
-  limit 91
+  limit 31
 )
 select countrycode, avg(length(searchword))
 from uservisits
@@ -120,9 +120,9 @@ group by countrycode;
 -- query 11
 SELECT searchword, useragent, languagecode
 from uservisits 
-where countrycode = 'PAN'
-  and visitdate = '1971-09-03'
-  and searchword in ('sxmtgekwngjwyjerk','jamyfanaoacldwi','hucii','xrlxwsikfsbuf','wubrrjursvtqteia','jfkjvramnrvuyp')
+where countrycode = 'QAT'
+  and visitdate = '2024-05-03' 
+  and searchword in ('come firm', 'draw indicate', 'close guess', 'certain', 'design trip news', 'the these section')
 Limit 65;
 
 -- query 12
@@ -137,10 +137,21 @@ SELECT
 FROM
   uservisits
 WHERE
-  visitdate >= '1998-02-02' and visitdate <= '1998-03-04' AND
-  countrycode in ( 'VEN','IND','BIH','HUN','SAU','MLT','DZA','PHL','JOR','IRL') AND
-  languagecode in ( 'VEN-ES','IND-HI','BIH-SR','HUN-HU','SAU-AR','MLT-MT','DZA-AR','PHL-EN','JOR-AR','IRL-GA') AND
-  useragent in ( 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)','Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)','Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)','Mozilla/5.0 (iPhone; U; CPU like Mac OS X)AppleWebKit/420.1 (KHTML like Gecko) Version/3.0 Mobile/4A93Safari/419.3','Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)','Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)','Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)','Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2)','Vtnpeyaoljvtht/7.3','Mozilla/5.0 (Windows; U; Windows NT 5.2) AppleWebKit/525.13 (KHTML like Gecko) Chrome/xxx')
+  visitdate >= '2020-10-04' and visitdate <= '2020-11-03' AND
+  countrycode in ('FRA', 'BHR', 'SGP', 'AUT', 'IRQ', 'NZL', 'DOM', 'LUX', 'NZL', 'CHE') AND
+  languagecode in ('FRA-FR', 'BHR-AR', 'SGP-ZH', 'AUT-DE', 'IRQ-AR', 'NZL-EN', 'DOM-ES', 'LUX-FR', 'NZL-EN', 'CHE-IT') AND
+  useragent in (
+    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)', 
+    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)', 
+    'Mozilla/5.0 (iPhone; U; CPU like Mac OS X)AppleWebKit/420.1 (KHTML like Gecko) Version/3.0 Mobile/4A93Safari/419.3', 
+    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)', 
+    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)', 
+    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2)', 
+    'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)', 
+    'Opera 9.2 (Windows Vista): Opera/9.20 (Windows NT 6.0; U; en)', 
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/701 (KHTML, like Gecko) Chrome/74.60 Safari/771', 
+    'Mozilla/5.0 (Macintosh; PPC Mac OS X; U; en)Opera 8.0'
+  )
 GROUP BY 1, 2;
 
 -- query 13
@@ -148,7 +159,7 @@ WITH
                 CTE1 AS 
                 ( 
                     SELECT languagecode FROM uservisits
-WHERE uservisits.countrycode = 'TUN'
+WHERE uservisits.countrycode = 'CHE'
   limit 1
                 ),
                 CTE2 AS 
@@ -166,8 +177,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON  uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1982-10-05'::DATE and '1982-11-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') AND uservisits.searchword IN ('lprrwdsxemjlpms') 
+                    uservisits.visitdate between '2024-07-29'::DATE and '2024-08-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') AND uservisits.searchword IN ('itself total') 
                     AND agents.operatingsystem = 'Windows 10'
                     GROUP BY uservisits.languagecode
                 ), CTE3 AS 
@@ -183,8 +194,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON  uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1982-10-05'::DATE and '1982-11-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') AND uservisits.searchword IN ('lprrwdsxemjlpms') 
+                    uservisits.visitdate between '2024-07-29'::DATE and '2024-08-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') AND uservisits.searchword IN ('itself total') 
                     AND agents.operatingsystem = 'Windows 10'
                     GROUP BY uservisits.languagecode
                 ), CTE4 AS 
@@ -199,9 +210,9 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON  uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1982-10-05'::DATE and '1982-11-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') 
-                    AND uservisits.searchword IN ('lprrwdsxemjlpms') 
+                    uservisits.visitdate between '2024-07-29'::DATE and '2024-08-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') 
+                    AND uservisits.searchword IN ('itself total') 
                     AND agents.operatingsystem = 'Windows 10'
                     GROUP BY uservisits.languagecode
                 ), CTE5 AS 
@@ -218,8 +229,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON  uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1982-10-05'::DATE and '1982-11-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') 
+                    uservisits.visitdate between '2024-07-29'::DATE and '2024-08-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') 
                     AND agents.operatingsystem = 'Windows 10'
                     GROUP BY uservisits.languagecode
                 ), CTE6 AS 
@@ -232,8 +243,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1982-12-05'::DATE and '1983-01-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') AND languagecode NOT IN ( SELECT * FROM CTE1 ) 
+                    uservisits.visitdate between '2024-09-29'::DATE and '2024-10-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') AND languagecode NOT IN ( SELECT * FROM CTE1 ) 
                     AND uservisits.sourceip IN ('123.143.30.99', '126.98.46.113') 
                     AND agents.operatingsystem = 'macOS'
                     GROUP BY uservisits.languagecode
@@ -250,8 +261,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1983-03-05'::DATE and '1983-04-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') 
+                    uservisits.visitdate between '2024-12-29'::DATE and '2025-01-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') 
                     AND agents.devicearch = 'ARM'
                     GROUP BY uservisits.languagecode
                 ), CTE8 AS 
@@ -265,8 +276,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1983-03-05'::DATE and '1983-04-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') 
+                    uservisits.visitdate between '2024-12-29'::DATE and '2025-01-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') 
                     AND agents.devicearch = 'x86'
                     GROUP BY uservisits.languagecode
                 ), CTE9 AS 
@@ -281,8 +292,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1983-03-05'::DATE and '1983-04-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') 
+                    uservisits.visitdate between '2024-12-29'::DATE and '2025-01-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') 
                     AND agents.devicearch = 'x86'
                     GROUP BY uservisits.languagecode
                 ), CTE10 AS 
@@ -296,8 +307,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1983-03-05'::DATE and '1983-04-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') 
+                    uservisits.visitdate between '2024-12-29'::DATE and '2025-01-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') 
                     AND agents.devicearch = 'ARM'
                     GROUP BY uservisits.languagecode
                 ), CTE11 AS 
@@ -312,8 +323,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1983-03-05'::DATE and '1983-04-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') 
+                    uservisits.visitdate between '2024-12-29'::DATE and '2025-01-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') 
                     AND agents.devicearch = 'x86'
                     GROUP BY uservisits.languagecode
                 ), CTE12 AS 
@@ -327,8 +338,8 @@ WHERE uservisits.countrycode = 'TUN'
  INNER JOIN agents ON uservisits.useragent = agents.agentname 
 
                     WHERE 
-                    uservisits.visitdate between '1983-03-05'::DATE and '1983-04-05'::DATE AND
-                    uservisits.countrycode IN ('TUN','URY','MKD') 
+                    uservisits.visitdate between '2024-12-29'::DATE and '2025-01-29'::DATE AND
+                    uservisits.countrycode IN ('CHE', 'URY', 'MKD') 
                     AND agents.devicearch = 'ARM'
                     GROUP BY uservisits.languagecode
                 ), 
@@ -433,8 +444,8 @@ LEFT JOIN agents a ON uv.useragent = a.agentname
 LEFT JOIN searchwords s ON uv.searchword = s.word
 WHERE
   a.operatingsystem = 'macOS' AND 
-  uv.visitdate >= '1971-09-03' AND uv.visitdate < '1971-10-04'
-    AND coalesce(uv.countrycode, '') = 'MYS'
+  uv.visitdate >= '2022-11-21' AND uv.visitdate < '2022-12-22'
+    AND coalesce(uv.countrycode, '') = 'ARE'
     AND (
         CASE
             WHEN uv.countrycode = '' AND uv.sourceip IS NOT NULL THEN 'Populated'
@@ -489,7 +500,7 @@ SELECT * FROM (
             SUM(CASE WHEN uv.duration > 30 THEN 1 ELSE 0 END) AS t1successful_visits
           FROM uservisits uv
           LEFT JOIN searchwords s ON uv.searchword = s.word
-          WHERE uv.sourceip LIKE '222%' and visitdate between '1982-10-05' and '1982-10-06' 
+          WHERE uv.sourceip LIKE '212%' and visitdate between '2023-05-18' and '2023-05-19'
           GROUP BY 1, 2
         ) ww
       ) bb WHERE z__pivot_col_rank <= 10000
@@ -502,20 +513,20 @@ ORDER BY z___pivot_row_rank;
 -- query 16
 SELECT r.*, v.visitdate, v.adrevenue
 FROM uservisits v inner join rankings r on v.destinationurl = r.pageurl
-WHERE sourceip ='159.220.2.32' and visitdate between '1985-01-19' and '1985-01-25';
+WHERE sourceip ='113.191.7.12' and visitdate between '2022-09-25' and '2022-10-01';
 
 -- query 17
-SELECT destinationurl, COUNT(*) AS visit_count FROM UserVisits WHERE (countrycode ='ESP' or countrycode = 'RUS') 
- AND EXTRACT(YEAR FROM visitDate) = 2012 AND EXTRACT(MONTH FROM visitDate) = 4 
+SELECT destinationurl, COUNT(*) AS visit_count FROM UserVisits WHERE (countrycode ='ISR' or countrycode = 'VNM') 
+ AND EXTRACT(YEAR FROM visitDate) = 2023 AND EXTRACT(MONTH FROM visitDate) = 9 
  GROUP BY destinationurl LIMIT 100;
 
 -- query 18
 SELECT destinationurl, sum(adrevenue) as adrevenues
 from uservisits
-WHERE searchword = 'rumclqkuxilymf'
-    and countrycode = 'NLD'
-    and visitdate BETWEEN '1997-12-25' AND '1997-12-30'
-    and REGEXP_LIKE(destinationurl,'^aaav')
+WHERE searchword = 'success'
+    and countrycode = 'ALB'
+    and visitdate BETWEEN '2022-02-19' AND '2022-02-24'
+    and REGEXP_LIKE(destinationurl,'^.com')
 group by destinationurl
 order by adrevenues DESC, destinationurl
 LIMIT 20000;
@@ -531,10 +542,10 @@ SELECT
 FROM uservisits B
 INNER JOIN agents  ON   B.useragent = agents.agentname 
 WHERE agents.operatingsystem = 'macOS' 
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND B.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE
-AND B.countrycode  IN ('MNE')
-AND B.sourceip IN ('193.40.40.164')
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND B.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE
+AND B.countrycode  IN ('HKG')
+AND B.sourceip IN ('190.68.109.55')
 GROUP BY searchword, B.languagecode
 ),
 
@@ -547,9 +558,9 @@ INNER JOIN agents
 ON   A.useragent = agentname 
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND A.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE
-AND A.sourceip IN ('193.40.40.164')
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND A.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE
+AND A.sourceip IN ('190.68.109.55')
 ),
 
 CTE3
@@ -568,10 +579,10 @@ INNER JOIN CTE2 AC2
 ON A.languagecode = AC2.languagecode
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND A.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE
-AND A.countrycode  IN ('MNE')
-AND A.sourceip IN ('193.40.40.164')
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND A.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE
+AND A.countrycode  IN ('HKG')
+AND A.sourceip IN ('190.68.109.55')
 GROUP BY searchword, A.languagecode
 ) ,
 
@@ -589,9 +600,9 @@ INNER JOIN agents
 ON   B.useragent = agentname 
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1') 
-AND B.countrycode  IN ('MNE')
-AND B.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera') 
+AND B.countrycode  IN ('HKG')
+AND B.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE
 GROUP BY searchword, B.languagecode
 ) ,
 
@@ -606,9 +617,9 @@ INNER JOIN agents
 ON   A.useragent = agentname 
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND A.countrycode IN('MNE')
-AND A.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND A.countrycode IN('HKG')
+AND A.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE
 ),
 
 CTE6
@@ -628,9 +639,9 @@ INNER JOIN CTE5 AC2
 ON A.languagecode = AC2.languagecode
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND A.countrycode  IN ('MNE')
-AND A.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND A.countrycode  IN ('HKG')
+AND A.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE
 AND AC.is_topic
 GROUP BY searchword, A.languagecode
 
@@ -651,9 +662,9 @@ INNER JOIN agents
 ON   B.useragent = agentname 
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1') 
-AND B.countrycode  IN ('MNE')
-AND B.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera') 
+AND B.countrycode  IN ('HKG')
+AND B.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE
 GROUP BY searchword, B.languagecode
 ), 
 
@@ -668,8 +679,8 @@ INNER JOIN agents
 ON   A.useragent = agentname 
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND A.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND A.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE
 ),
 
 CTE9
@@ -690,9 +701,9 @@ ON A.languagecode = AC2.languagecode
 
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND A.countrycode  IN ('MNE')
-AND A.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE  
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND A.countrycode  IN ('HKG')
+AND A.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE  
 AND AC.is_topic  
 GROUP BY searchword, A.languagecode
 
@@ -710,10 +721,10 @@ INNER JOIN agents
 ON   B.useragent = agentname 
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND B.countrycode  IN ('MNE')
-AND B.sourceip IN ('193.40.40.164')
-AND B.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE  
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND B.countrycode  IN ('HKG')
+AND B.sourceip IN ('190.68.109.55')
+AND B.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE  
 GROUP BY searchword, B.languagecode
 ),
 
@@ -726,9 +737,9 @@ INNER JOIN agents
 ON   A.useragent = agentname 
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND A.sourceip IN ('193.40.40.164')
-AND A.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE  
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND A.sourceip IN ('190.68.109.55')
+AND A.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE  
 ),
 
 CTE12
@@ -746,10 +757,10 @@ INNER JOIN CTE11 AC2
 ON A.languagecode = AC2.languagecode
 WHERE agents.operatingsystem = 'macOS' 
 AND agents.devicearch = 'x64'
-AND agents.browser IN ('Gllvuxwiyxaufhlayjaq/0.7', 'Qbtuhtunyhwcqkjktthkymsxb/1.', 'Adabkjshehkwvvbdmahdwoku/5.1')
-AND A.countrycode  IN ('MNE')
-AND A.sourceip IN ('193.40.40.164')
-AND A.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE    
+AND agents.browser IN ('Google Chrome', 'Safari', 'Opera')
+AND A.countrycode  IN ('HKG')
+AND A.sourceip IN ('190.68.109.55')
+AND A.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE    
 AND AC.is_topic  
 GROUP BY searchword, A.languagecode
 ),
@@ -897,7 +908,7 @@ INNER JOIN CTE10 C1
 ON C1.languagecode = C2.languagecode
 AND C1.searchword=C2.searchword
 WHERE C1.searchword='u'
-  AND C2.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE  
+  AND C2.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE  
 GROUP BY ALL
     
 UNION ALL
@@ -911,7 +922,7 @@ FROM uservisits AS C2
 INNER JOIN CTE10 C1
 ON C1.languagecode = C2.languagecode
 AND C1.searchword=C2.searchword
-AND C2.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE    
+AND C2.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE    
 WHERE C1.searchword='u'
 GROUP BY ALL
 
@@ -926,7 +937,7 @@ FROM uservisits AS C2
 INNER JOIN CTE10 C1
 ON C1.languagecode = C2.languagecode
 AND C1.searchword=C2.searchword
-AND C2.visitdate between '1984-03-21'::DATE and '1984-03-23'::DATE    
+AND C2.visitdate between '2023-12-04'::DATE and '2023-12-06'::DATE    
 WHERE C1.searchword='u'
 GROUP BY ALL
 )
@@ -937,28 +948,28 @@ SELECT searchword AS searchword,
 where_duration AS where_duration,
 (C1.sum_duration_DATA) AS sum_duration_DATA
 FROM CTE13 AS C1
-WHERE  0<>(SELECT COUNT(ip) FROM ipaddresses WHERE ip IN ('193.40.40.164'))
+WHERE  0<>(SELECT COUNT(ip) FROM ipaddresses WHERE ip IN ('190.68.109.55'))
 
 UNION ALL
 SELECT searchword AS searchword,
 where_duration AS where_duration,
 (C2.sum_duration_DATA) AS sum_duration_DATA
 FROM CTE16 AS C2
-WHERE  0<>(SELECT COUNT(ip) FROM ipaddresses WHERE ip IN ('193.40.40.164'))
+WHERE  0<>(SELECT COUNT(ip) FROM ipaddresses WHERE ip IN ('190.68.109.55'))
 
 UNION ALL
 SELECT searchword AS searchword,
 where_duration AS where_duration,
 (C3.sum_duration_DATA) AS sum_duration_DATA
 FROM CTE14 AS C3
-WHERE  0=(SELECT COUNT(ip) FROM ipaddresses WHERE ip IN ('193.40.40.164'))
+WHERE  0=(SELECT COUNT(ip) FROM ipaddresses WHERE ip IN ('190.68.109.55'))
 
 UNION ALL
 SELECT searchword AS searchword,
 where_duration AS where_duration,
 (C4.sum_duration_DATA) AS sum_duration_DATA
 FROM CTE15 AS C4
-WHERE  0=(SELECT COUNT(ip) FROM ipaddresses WHERE ip IN ('193.40.40.164'))
+WHERE  0=(SELECT COUNT(ip) FROM ipaddresses WHERE ip IN ('190.68.109.55'))
 
 )
 GROUP BY searchword,where_duration;
@@ -970,26 +981,26 @@ With origin_tab as (
     from
         uservisits
     where
-  		visitdate between '1996-01-13'::DATE and '1996-01-14'::DATE
+  		visitdate between '2024-08-17'::DATE and '2024-08-18'::DATE
         and countrycode in ('ARG', 'SWE')
         and regexp_like(destinationurl, '.*(ad|b$)')
         and adrevenue > 0.9
 ),
 searchwords_tab as (
-    select * from searchwords where word like 'dmj%'
+    select * from searchwords where word like 'the%'
     union all
-    select * from searchwords where word like 'oaw%'
+    select * from searchwords where word like 'tax%'
     union all
-    select * from searchwords where word like 'sqy%'
+    select * from searchwords where word like 'fee%'
     union all
-    select * from searchwords where word like 'uiq%'
+    select * from searchwords where word like 'hit%'
     union all
-    select * from searchwords where word like 'ypc%'
+    select * from searchwords where word like 'fri%'
 ),
 result_tab as (
     select *
     from origin_tab
-    where visitdate between '1995-12-29'::DATE and '1996-03-13'::DATE
+    where visitdate between '2024-08-02'::DATE and '2024-10-16'::DATE
 )
 select 
 (
@@ -1008,7 +1019,7 @@ select
                     from
                         searchwords_tab
                     where
-                        word_hash in (-7415420274510428330)
+                        word_hash in (8637088342410109700)
                 )
             order by
                 adrevenue desc
@@ -1021,49 +1032,49 @@ select
 (select destinationurl from result_tab
 where
 searchword in ( select distinct word from searchwords_tab 
-where word_hash in (-8980519242285124908)) 
+where word_hash in (-5713198883824118089)) 
 order by adrevenue desc limit 3)) f1
 ,
 (select ARRAY_AGG(destinationurl) from
 (select destinationurl from result_tab
 where
 searchword in ( select distinct word from searchwords_tab 
-where word_hash in (7899244578289190280)) 
+where word_hash in (2454218397564696334)) 
 order by adrevenue desc limit 3)) f2
 ,
 (select ARRAY_AGG(destinationurl) from
 (select destinationurl from result_tab
 where
 searchword in ( select distinct word from searchwords_tab 
-where word_hash in (-6034021915782578368)) 
+where word_hash in (-1820666311870301227)) 
 order by adrevenue desc limit 3)) f3
 ,
 (select ARRAY_AGG(destinationurl) from
 (select destinationurl from result_tab
 where
 searchword in ( select distinct word from searchwords_tab 
-where word_hash in (-2474214877239986428,2108235117380421554,1933492463231786852,6511871038920919944,827423760198925133,-3402740342860750120,6367591589524276899,-7354092148153388744,-5091813435214241015,-3648440944875687797)) 
+where word_hash in (8644561162363758030, 1590051461067175528, -5053658049239510121, 7810904927140280516, -7009170756344001614,-5086883951133945964, -514832142673359269, 6127045034804176891, 1826441640885516856, 8381368794783220959)) 
 order by adrevenue desc limit 3)) f4
 ,
 (select ARRAY_AGG(destinationurl) from
 (select destinationurl from result_tab
 where
 searchword in ( select distinct word from searchwords_tab 
-where word_hash in (-3270318827080561768)) 
+where word_hash in (6199526617341103713))
 order by adrevenue desc limit 3)) f5
 ,
 (select ARRAY_AGG(destinationurl) from
 (select destinationurl from result_tab
 where
 searchword in ( select distinct word from searchwords_tab 
-where word_hash in (760998907509127183,-1705571121037205547,-5274470558381209768,1187362410747005146,6881555994214033696,6608489628838647222,2608579498325714199)) 
+where word_hash in (7740847646030491569, 7285727206792179080, 8629489941932462024, -1393525601299598534, 7418795809015032129,-7967245323559166905, 7322682162708365250)) 
 order by adrevenue desc limit 3)) f6
 ,
 (select ARRAY_AGG(destinationurl) from
 (select destinationurl from result_tab
 where
 searchword in ( select distinct word from searchwords_tab 
-where word_hash in (3536249655543172992)) 
+where word_hash in (551453269330966873)) 
 order by adrevenue desc limit 3)) f7;
 
 -- query 21
@@ -1081,7 +1092,7 @@ SELECT
 FROM (
     SELECT *
     FROM uservisits
-    WHERE visitdate >= '1988-05-20' AND visitdate < '1988-06-19' and countrycode = 'BEL'
+    WHERE visitdate >= '2022-12-23' AND visitdate < '2023-01-22' and countrycode = 'URY'
     LIMIT 1
 ) uv
 LEFT JOIN (
@@ -1100,7 +1111,7 @@ LEFT JOIN (
     SELECT *
     FROM searchwords
 ) s ON uv.searchword = s.word
-WHERE uv.countrycode = 'BEL' AND a.operatingsystem = 'Windows 10'
+WHERE uv.countrycode = 'URY' AND a.operatingsystem = 'Windows 10'
     AND (CASE WHEN (CASE
             WHEN 'Off' = 'Off' THEN TRUE
             WHEN 'Date' = 'Date' AND 'Off' = 'Complete' AND EXTRACT(HOUR FROM CURRENT_TIMESTAMP) >= 9 THEN (uv.visitdate + interval '1' day > CURRENT_DATE)
@@ -1153,7 +1164,7 @@ FROM uservisits uv
 LEFT JOIN ipaddresses i ON uv.sourceip = i.ip
 LEFT JOIN agents a ON uv.useragent = a.agentname
 LEFT JOIN searchwords s ON uv.searchword = s.word
-WHERE uv.visitdate >= '2000-03-04' AND uv.visitdate < '2000-03-07'
+WHERE uv.visitdate >= '2024-07-25' AND uv.visitdate < '2024-07-28'
     AND a.operatingsystem = 'macOS'
 GROUP BY 1, 2
 ORDER BY f1 DESC
@@ -1175,16 +1186,16 @@ filtered_dpd AS (
     JOIN rankings r ON uv.destinationurl = r.pageurl
     JOIN agents a ON uv.useragent = a.agentname
     WHERE sw.word IN (SELECT keyword FROM c_curr_searchwords)
-    AND uv.visitdate BETWEEN '1970-01-01' AND '1970-01-31' and uv.sourceip = '135.186.62.229'
+    AND uv.visitdate BETWEEN '2023-12-15' AND '2024-01-14' and uv.sourceip = '45.125.176.154'
 ),
 filtered_d AS (
-    SELECT fdp.country, sw.word AS keyword, '1969-01' AS yearmonth, 5 AS d
+    SELECT fdp.country, sw.word AS keyword, '2022-12' AS yearmonth, 5 AS d
     FROM searchwords sw
     JOIN filtered_dpd fdp ON sw.word = fdp.keyword
     WHERE sw.is_topic = true
 ),
 filtered_i AS (
-    SELECT fdp.country, sw.word AS keyword, '1969-01' AS yearmonth, 'informational' AS primary_i
+    SELECT fdp.country, sw.word AS keyword, '2022-12' AS yearmonth, 'informational' AS primary_i
     FROM searchwords sw
     JOIN filtered_dpd fdp ON sw.word = fdp.keyword
     WHERE sw.is_topic = true
@@ -1270,7 +1281,7 @@ WITH
     FROM
       uservisits uv
     WHERE
-      uv.visitdate BETWEEN '2000-03-04' AND '2000-03-06'
+      uv.visitdate BETWEEN '2023-07-12' AND '2023-07-14'
     GROUP BY
       uv.sourceip
   ),
@@ -1287,7 +1298,7 @@ WITH
       JOIN searchwords sw ON uv.searchword = sw.word
       LEFT JOIN word_titles gt ON gt.id = sw.word_id
     WHERE
-      uv.visitdate BETWEEN '2000-03-04' AND '2000-03-06'
+      uv.visitdate BETWEEN '2023-07-12' AND '2023-07-14'
     GROUP BY
       uv.sourceip
   ),
@@ -1301,7 +1312,7 @@ WITH
     FROM
       uservisits uv
     WHERE
-      uv.visitdate BETWEEN '2000-03-04' AND '2000-03-06'
+      uv.visitdate BETWEEN '2023-07-12' AND '2023-07-14'
     GROUP BY
       uv.sourceip
   ),
@@ -1318,7 +1329,7 @@ WITH
       JOIN searchwords sw ON uv.searchword = sw.word
       LEFT JOIN word_titles gt ON gt.id = sw.word_id
     WHERE
-      uv.visitdate BETWEEN '2000-03-04' AND '2000-03-06'
+      uv.visitdate BETWEEN '2023-07-12' AND '2023-07-14'
     GROUP BY
       uv.sourceip
   ),
@@ -1335,7 +1346,7 @@ WITH
       uservisits uv
       JOIN searchwords sw ON uv.searchword = sw.word
     WHERE
-      uv.visitdate BETWEEN '2000-03-04' AND '2000-03-06'
+      uv.visitdate BETWEEN '2023-07-12' AND '2023-07-14'
     GROUP BY
       uv.sourceip
   )
@@ -1370,9 +1381,9 @@ WITH
       uservisits uv
       JOIN searchwords sw ON uv.searchword = sw.word
     WHERE
-      uv.countrycode = 'SYR'
-      AND uv.visitdate >= DATE '1979-07-25'
-      AND uv.visitdate < DATE '1979-07-27'
+      uv.countrycode = 'NZL'
+      AND uv.visitdate >= DATE '2022-02-06'
+      AND uv.visitdate < DATE '2022-02-08'
     GROUP BY
       uv.countrycode,
       sw.word
@@ -1386,9 +1397,9 @@ WITH
       uservisits uv
       JOIN searchwords sw ON uv.searchword = sw.word
     WHERE
-      uv.countrycode = 'SYR'
-      AND uv.visitdate >= DATE '1979-07-25'
-      AND uv.visitdate < DATE '1979-08-24'
+      uv.countrycode = 'NZL'
+      AND uv.visitdate >= DATE '2022-02-06'
+      AND uv.visitdate < DATE '2022-03-08'
   ),
 
   original_count AS (
@@ -1397,7 +1408,7 @@ WITH
     FROM
       base_metrics
     WHERE
-      searchword = 'obnprqyuhcev'
+      searchword = 'remove'
   ),
 
   site_intersection AS (
@@ -1407,7 +1418,7 @@ WITH
     FROM
       base_site b
     WHERE
-      b.site IN (SELECT site FROM base_site WHERE searchword = 'obnprqyuhcev')
+      b.site IN (SELECT site FROM base_site WHERE searchword = 'remove')
     GROUP BY
       b.searchword
   ),
@@ -1443,7 +1454,7 @@ WITH
     CROSS JOIN
       original_count o
     WHERE
-      j.searchword != 'obnprqyuhcev'
+      j.searchword != 'remove'
       AND NOT REGEXP_LIKE(LOWER(j.searchword), 'pattern1|text2|word3')
   )
 
