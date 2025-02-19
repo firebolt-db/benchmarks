@@ -367,6 +367,14 @@ class ConcurrentBenchmarkRunner:
         connector.connect(True)
         results = []
 
+        random_queries = []
+        for i, query_name in enumerate(itertools.cycle(query_names_random_permutation)):
+            # Choose a random variation of the query
+            random_query_variation = rng.choice(self.queries[query_name])
+            random_queries.append(random_query_variation)
+            if i == 10_000:
+                break
+
         # Wait until all worker threads are ready
         self.start_barrier.wait()
 
@@ -374,38 +382,39 @@ class ConcurrentBenchmarkRunner:
         query_id = 0
 
         # Repeatedly iterate over the queries until the main thread sets `self.stop_event`
-        for query_name in itertools.cycle(query_names_random_permutation):
-            # Choose a random variation of the query
-            random_query_variation = rng.choice(self.queries[query_name])
-            try:
-                has_error = False
-                start_time = time.time()
-                num_output_rows = len(connector.execute_query(random_query_variation))
-                stop_time = time.time()
-            except Exception as e:
-                has_error = True
-                self.logger.error(
-                    f"Error running query {query_name} for {self.vendor}: {str(e)}"
-                )
-
-            if self.stop_event.is_set():
-                # Stop the worker thread. The current query did not finish in time and should not
-                # be included in `self.worker_thread_results`.
-                self.worker_thread_results[worker_id] = results
-                connector.close()
-                return
-            else:
-                results.append(
-                    ConcurrentQueryResult(
-                        query_name=query_name,
-                        query_id=query_id,
-                        has_error=has_error,
-                        num_output_rows=0 if has_error else num_output_rows,
-                        start_unix_time=start_time,
-                        stop_unix_time=stop_time,
+        while True:
+            for random_query_variation in random_queries:
+                try:
+                    has_error = False
+                    start_time = time.time()
+                    num_output_rows = len(
+                        connector.execute_query(random_query_variation)
                     )
-                )
-                query_id += 1
+                    stop_time = time.time()
+                except Exception as e:
+                    has_error = True
+                    self.logger.error(
+                        f"Error running query {query_name} for {self.vendor}: {str(e)}"
+                    )
+
+                if self.stop_event.is_set():
+                    # Stop the worker thread. The current query did not finish in time and should not
+                    # be included in `self.worker_thread_results`.
+                    self.worker_thread_results[worker_id] = results
+                    connector.close()
+                    return
+                else:
+                    results.append(
+                        ConcurrentQueryResult(
+                            query_name=query_name,
+                            query_id=query_id,
+                            has_error=has_error,
+                            num_output_rows=0 if has_error else num_output_rows,
+                            start_unix_time=start_time,
+                            stop_unix_time=stop_time,
+                        )
+                    )
+                    query_id += 1
 
     def _write_csv(self):
         # Ensure the directory exists
