@@ -5,7 +5,7 @@ markdown files in this folder:
 
 * [Concurrency results](./concurrency.md)
 * [First (cold) run results](./first_run.md)
-* [Firebolt on TPCH](./tpch.csv)
+* [Firebolt on TPCH](./TPCH-100gb.csv)
 
 The following sections contain each benchmark query, execution times across configurations, and rankings.
 🥇 = Fastest configuration, 🥈 = 2nd fastest, 🥉 = 3rd fastest
