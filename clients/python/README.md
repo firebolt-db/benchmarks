@@ -18,43 +18,8 @@ Make sure to install the required packages listed in `requirements.txt`.
 pip install -r requirements.txt
 ```
 
-## Credential Files
-
-To connect to the data warehouse vendors, you need to provide a single credentials file located at `config/credentials/credentials.json`. The expected format for this file is as follows:
-
-```json
-{
-    "snowflake": {
-        "account": "your_account",
-        "user": "your_username",
-        "password": "your_password",
-        "database": "your_database",
-        "schema": "your_schema",
-        "warehouse": "your_warehouse"
-    },
-    "redshift": {
-        "host": "your_cluster.region.redshift.amazonaws.com",
-        "port": 5439,
-        "database": "your_database",
-        "user": "your_user",
-        "password": "your_password"
-    },
-    "firebolt": {
-        "account_name": "your firebolt account name",
-        "database": "your_database",
-        "engine_name": "your_engine",
-        "auth": {
-            "id": "your firebolt service account id",
-            "secret": "your firebolt service account secret"
-        }
-    },
-    "bigquery": {
-        "project_id": "your_project_id",
-        "dataset": "your_dataset",
-        "key": "your json key generated from google cloud"
-    }
-}
-```
+If you have other Python-based projects, it's recommended to do this via
+[venv](https://docs.python.org/3/library/venv.html) or [uv](https://github.com/astral-sh/uv).
 
 ## Usage
 

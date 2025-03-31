@@ -25,6 +25,72 @@ View each client:
 * [Python client](/clients/python/)
 * [K6 client](/clients/k6/)
 
+### Credentials
+
+To connect to each data warehouse vendor, you need to provide a single credentials file located
+at `config/credentials/credentials.json`. The expected format for this file is as follows:
+
+```json
+{
+    "snowflake": {
+        "account": "your_account",
+        "user": "your_username",
+        "password": "your_password",
+        "database": "your_database",
+        "schema": "your_schema",
+        "warehouse": "your_warehouse"
+    },
+    "redshift": {
+        "host": "your_cluster.region.redshift.amazonaws.com",
+        "port": 5439,
+        "database": "your_database",
+        "user": "your_user",
+        "password": "your_password"
+    },
+    "firebolt": {
+        "account_name": "your firebolt account name",
+        "database": "your_database",
+        "engine_name": "your_engine",
+        "auth": {
+            "id": "your firebolt service account id",
+            "secret": "your firebolt service account secret"
+        }
+    },
+    "bigquery": {
+        "project_id": "your_project_id",
+        "dataset": "your_dataset",
+        "key": "your json key generated from google cloud"
+    }
+}
+```
+
+Create your `credentials.json` file, paste this template in, and then fill in the
+appropriate credentials for the vendors you wish to connect with. Please note that
+if you have a different means of authenticating with these vendors, you may also
+need to modify how the benchmarking clients handle authentication.
+
+### Ingest Data
+
+In order to load the data into each system, you will need to run the `setup.sql` scripts
+present in the `/benchmarks` folder. You can do this manually in each vendor, or for ease,
+the Python client can do this programmatically at the start of a benchmark run. For example,
+to load data into Firebolt, configure your credentials, run:
+
+```bash
+/clients/python$ pip install -r requirements.txt
+```
+
+If you have other Python-based projects, it's recommended to do this with
+[venv](https://docs.python.org/3/library/venv.html) or [uv](https://github.com/astral-sh/uv).
+
+Then run:
+
+```bash
+/clients/python$ python -m src.main FireScale --vendors firebolt --execute-setup True
+```
+
+This will ingest the data and then kick off an initial benchmark power run.
+
 ## Directory Structure
 
 ```

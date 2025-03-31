@@ -42,36 +42,46 @@ COPY
 INTO
 	uservisits
 FROM
-	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/uservisits/gz-parquet/' WITH
-TYPE = parquet;
+	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/uservisits/gz-parquet/'
+WITH
+	CREDENTIALS = (AWS_ROLE_ARN = 'arn:aws:iam::442042532160:role/FireboltS3DatasetsAccess')
+	TYPE = parquet;
 
 COPY
 INTO
 	rankings
 FROM
-	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/rankings/' WITH
-TYPE = parquet;
+	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/rankings/'
+WITH
+	CREDENTIALS = (AWS_ROLE_ARN = 'arn:aws:iam::442042532160:role/FireboltS3DatasetsAccess')
+	TYPE = parquet;
 
 COPY
 INTO
 	ipaddresses
 FROM
-	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/dimensions/ipaddresses/' WITH
-TYPE = parquet;
+	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/dimensions/ipaddresses/'
+WITH
+	CREDENTIALS = (AWS_ROLE_ARN = 'arn:aws:iam::442042532160:role/FireboltS3DatasetsAccess')
+	TYPE = parquet;
 
 COPY
 INTO
 	agents
 FROM
-	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/dimensions/agents/' WITH
-TYPE = parquet;
+	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/dimensions/agents/'
+WITH
+	CREDENTIALS = (AWS_ROLE_ARN = 'arn:aws:iam::442042532160:role/FireboltS3DatasetsAccess')
+	TYPE = parquet;
 
 COPY
 INTO
 	searchwords
 FROM
-	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/dimensions/searchwords/' WITH
-TYPE = parquet;
+	's3://firebolt-benchmarks-requester-pays-us-east-1/firenewt/1tb/dimensions/searchwords/'
+WITH
+	CREDENTIALS = (AWS_ROLE_ARN = 'arn:aws:iam::442042532160:role/FireboltS3DatasetsAccess')
+	TYPE = parquet;
 
 VACUUM uservisits;
 
