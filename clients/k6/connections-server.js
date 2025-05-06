@@ -61,6 +61,8 @@ const SNOWFLAKE_PASSWORD     = fileSnowflake.password   ?? process.env.SNOWFLAKE
 const SNOWFLAKE_WAREHOUSE    = fileSnowflake.warehouse  ?? process.env.SNOWFLAKE_WAREHOUSE;
 const SNOWFLAKE_DATABASE     = fileSnowflake.database   ?? process.env.SNOWFLAKE_DATABASE;
 const SNOWFLAKE_SCHEMA       = fileSnowflake.schema     ?? process.env.SNOWFLAKE_SCHEMA;
+const SNOWFLAKE_KEY_PATH     = fileSnowflake.keyPath    ?? process.env.SNOWFLAKE_KEY_PATH;
+const SNOWFLAKE_PASSPHRASE   = fileSnowflake.passphrase ?? process.env.SNOWFLAKE_PASSPHRASE;
 
 const fileRedshift = credsConfig.redshift ?? {};
 const REDSHIFT_HOST          = fileRedshift.host        ?? process.env.REDSHIFT_HOST;
@@ -128,15 +130,32 @@ function connectSnowflakeAsync(conn) {
 
 async function getSnowflakeConnection(vuID, privateKey) {
   if (!connections.has(vuID)) {
-    const conn = snowflake.createConnection({
-      account: SNOWFLAKE_ACCOUNT,
-      username: SNOWFLAKE_USERNAME,
-      password: SNOWFLAKE_PASSWORD,
-      warehouse: SNOWFLAKE_WAREHOUSE,
-      database: SNOWFLAKE_DATABASE,
-      schema: SNOWFLAKE_SCHEMA,
-      logLevel: 'ERROR'
-    });
+    let conn;
+    if (SNOWFLAKE_KEY_PATH) {
+      // Use key-based authentication (JWT)
+      conn = snowflake.createConnection({
+        account: SNOWFLAKE_ACCOUNT,
+        authenticator: 'SNOWFLAKE_JWT',
+        username: SNOWFLAKE_USERNAME,
+        privateKeyPath: SNOWFLAKE_KEY_PATH,
+        privateKeyPass: SNOWFLAKE_PASSPHRASE,
+        warehouse: SNOWFLAKE_WAREHOUSE,
+        database: SNOWFLAKE_DATABASE,
+        schema: SNOWFLAKE_SCHEMA,
+        logLevel: 'ERROR'
+      });
+    } else {
+      // Use password-based authentication
+      conn = snowflake.createConnection({
+        account: SNOWFLAKE_ACCOUNT,
+        username: SNOWFLAKE_USERNAME,
+        password: SNOWFLAKE_PASSWORD,
+        warehouse: SNOWFLAKE_WAREHOUSE,
+        database: SNOWFLAKE_DATABASE,
+        schema: SNOWFLAKE_SCHEMA,
+        logLevel: 'ERROR'
+      });
+    }
     await connectSnowflakeAsync(conn);
     connections.set(vuID, conn);
     await new Promise((resolve, reject) => {
