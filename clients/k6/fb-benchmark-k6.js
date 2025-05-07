@@ -26,6 +26,7 @@ export const options = {
   duration: config.duration
 };
 
+const DEFAULT_TIMEOUT = '120s'; 
 
 const queryTypes = Object.keys(queries);  // ["query 1", "query 2", ..., "query N"]
 const numQueryTypes = queryTypes.length;  // Number of query types
@@ -56,7 +57,7 @@ export default function () {
     });
 
     // Make the request
-    const params = { headers: { "Content-Type": "application/json" } };
+    const params = { headers: { "Content-Type": "application/json" }, timeout: DEFAULT_TIMEOUT, };
     const res = http.post(API_URL, payload, params);
 
     if (res.status !== 200) {
