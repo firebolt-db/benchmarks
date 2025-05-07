@@ -32,15 +32,23 @@ class SnowflakeConnector:
     def connect(self):
         """Context manager for database connections."""
         if not self._conn:
-            self._conn = snowflake.connector.connect(
-                account=self.config['account'],
-                user=self.config['user'],
-                password=self.config['password'],
-                warehouse=self.config.get('warehouse'),
-                database=self.config.get('database'),
-                schema=self.config.get('schema'),
-                telemetry=False
-            )
+            connect_args = {
+                "account": self.config["account"],
+                "user": self.config["user"],
+                "warehouse": self.config.get("warehouse"),
+                "database": self.config.get("database"),
+                "schema": self.config.get("schema"),
+                "telemetry": False,
+            }
+            if "privateKeyPath" in self.config:
+                connect_args.update({
+                    "authenticator": "SNOWFLAKE_JWT",
+                    "private_key_file": self.config["privateKeyPath"],
+                    "private_key_file_pwd": self.config.get("privateKeyPass"),
+                })
+            else:
+                connect_args["password"] = self.config["password"]
+            self._conn = snowflake.connector.connect(**connect_args)
             self._cursor = self._conn.cursor(snowflake.connector.DictCursor)
             self._cursor.execute("ALTER SESSION SET USE_CACHED_RESULT = FALSE;")
 
