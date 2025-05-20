@@ -35,7 +35,8 @@ python -m src.main <benchmark_name> --vendors <vendor1,vendor2,...> [--execute-s
 - `--vendors`: Comma-separated list of vendors to benchmark (e.g., `snowflake,firebolt`).
 - `--execute-setup`: (Optional) Set to `True` to execute the `setup.sql` file before running benchmarks. Default is `False`.
 - `--pool-size`: (Optional) Connection pool size. Default is `5`.
-- `--concurrency`: (Optional) Concurrency level. Default is `1`.
+- `--concurrency`: (Optional) Concurrency level. Default is `1`, which skips any concurrency testing.
+- `--concurrency-duration-s`: (Optional) Duration to run concurrent benchmark for in seconds. Default is `60`.
 - `--output-dir`: (Optional) Output directory. Default is `benchmark_results`.
 - `--creds`: (Optional) Path to credentials file. Default is `config/credentials/credentials.json`.
 

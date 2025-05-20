@@ -59,7 +59,7 @@ def main():
                        help='Connection pool size')
     parser.add_argument('--concurrency', type=int, default=1, 
                        help='Concurrent queries')
-    parser.add_argument('--concurrency-duration-s', type=int, default=1,
+    parser.add_argument('--concurrency-duration-s', type=int, default=60,
                        help='The duration in seconds to use for each concurrency benchmark')
     parser.add_argument('--seed', type=int, default=1,
                        help='The seed of the random number generator for reproducibility')
@@ -99,6 +99,9 @@ def main():
             return
 
         logger.info(f"Sequential benchmark results saved to: {args.output_dir}")
+
+        if args.concurrency == 1:   # if concurrency is 1, sequential run was enough, we can exit
+            return
 
         # Run the concurrency benchmarks for one vendor at a time, one after another
         for vendor in vendors:
