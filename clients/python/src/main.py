@@ -8,7 +8,7 @@ from .runner import BenchmarkRunner, ConcurrentBenchmarkRunner
 
 def setup_logging():
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.CRITICAL,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
@@ -91,6 +91,37 @@ def main():
             output_dir=args.output_dir,
             benchmark_path=benchmark_path,
             execute_setup=args.execute_setup,
+        )
+
+        # vendor average query durations for all default supported vendors
+        sequential_runner.set_query_weights(
+            {
+                1: 0.51,
+                2: 0.40,
+                3: 0.23,
+                4: 0.29,
+                5: 0.54,
+                6: 0.23,
+                7: 0.19,
+                8: 0.27,
+                9: 1.04,
+                10: 9.01,
+                11: 0.22,
+                12: 0.47,
+                13: 5.80,
+                14: 4.08,
+                15: 0.74,
+                16: 0.43,
+                17: 0.71,
+                18: 0.41,
+                19: 6.41,
+                20: 1.39,
+                21: 3.30,
+                22: 2.88,
+                23: 1.48,
+                24: 11.87,
+                25: 2.50,
+             }
         )
 
         results = sequential_runner.run_benchmark()

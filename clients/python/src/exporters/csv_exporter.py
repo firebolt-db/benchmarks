@@ -28,7 +28,6 @@ class CSVExporter(BenchmarkExporter):
                     }
                     writer.writerow(row)
                     rows.append(row)
-        print(f"Results exported to {csv_file_path}")
 
         df = pd.DataFrame(rows)
         # Generate summary tables

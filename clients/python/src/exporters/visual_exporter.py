@@ -66,4 +66,3 @@ class VisualExporter(BenchmarkExporter):
         visual_file_path = os.path.join(output_dir, 'visual_results.pdf')
         plt.savefig(visual_file_path, dpi=400)
         plt.close()
-        print(f"Visualization saved to {visual_file_path}")

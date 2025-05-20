@@ -13,11 +13,19 @@ from datetime import datetime
 from pathlib import Path
 from queue import Queue
 from typing import Any, Dict, List, Optional
+from tqdm import tqdm
 
 from . import connectors
 from .exporters import CSVExporter, VisualExporter
 
 ITERATIONS_PER_QUERY = 5
+
+VENDOR_COLORS = {
+    "firebolt": "#F72A30",
+    "bigquery": "#579E4B",
+    "snowflake": "#29B5E8",
+    "redshift": "#2E73B8"
+}
 
 @dataclass
 class QueryResult:
@@ -78,6 +86,12 @@ class BenchmarkRunner:
         self.logger = logging.getLogger(__name__)
         self.benchmark_path = benchmark_path
         self.connection_pools = {}
+
+        self.query_weights = {}
+        self.total_weight = 0
+        self._progress_lock = threading.Lock()
+        self._vendor_progress_bars = {}
+        self._vendor_query_counts = {}
         
         # Load credentials
         with open(creds_file, 'r') as f:
@@ -91,6 +105,23 @@ class BenchmarkRunner:
 
             connector_class = connectors.get_connector_class(vendor)
             self.connectors[vendor] = connector_class(config=self.credentials[vendor])
+
+    def set_query_weights(self, weights: Dict[int, float]):
+        self.query_weights = weights
+        self.total_weight = sum(weights[q] for q in weights) * ITERATIONS_PER_QUERY
+
+    def _update_progress(self, vendor: str, query_number: int):
+        with self._progress_lock:
+            weight = self.query_weights.get(query_number, 1.0)
+            if vendor in self._vendor_progress_bars:
+                self._vendor_progress_bars[vendor].update(weight)
+                if vendor not in self._vendor_query_counts:
+                    self._vendor_query_counts[vendor] = 1
+                else:
+                    self._vendor_query_counts[vendor] += 1
+                count = self._vendor_query_counts[vendor]
+                # manually update display to show count-based progress
+                self._vendor_progress_bars[vendor].set_description(f"{vendor.title():<10} {count:3}/125")
 
     def _load_queries(self, query_file):
         if isinstance(query_file, (str, bytes, os.PathLike)):
@@ -182,7 +213,8 @@ class BenchmarkRunner:
                     ))
                 except Exception as e:
                     self.logger.error(f"Error in concurrent execution: {str(e)}")
-        
+                finally:
+                    self._update_progress(vendor, query_number)
         return results
     
     def _get_sql_file(self, vendor, file_type):
@@ -201,7 +233,7 @@ class BenchmarkRunner:
         results = {}
         num_iterations = ITERATIONS_PER_QUERY if self.concurrency == 1 else 1 # Run each query multiple times to get a distribution
 
-        def run_vendor_benchmark(vendor):
+        def run_vendor_benchmark(vendor, position):
             if vendor not in self.connectors:
                 self.logger.warning(f"Skipping {vendor} - connector not implemented")
                 return vendor, []
@@ -235,6 +267,22 @@ class BenchmarkRunner:
                     raise ValueError(f"No benchmark queries found for vendor: {vendor}")
                 self.logger.info(f"Loaded {len(benchmark_queries)} benchmark queries for: {vendor}")
 
+                est_total_weight = sum(self.query_weights.get(qn+1, 1.0) for qn in range(len(benchmark_queries))) * num_iterations
+
+                color_code = VENDOR_COLORS.get(vendor.lower(), None)
+                bar_format = "{l_bar}{bar}| [{elapsed}]"
+
+                with self._progress_lock:
+                    self._vendor_progress_bars[vendor] = tqdm(
+                        total=est_total_weight,
+                        desc=f"{vendor.title():<10} Progress {int(0):3}/125",
+                        position=position,
+                        leave=True,
+                        bar_format=bar_format,
+                        ncols=120,
+                        colour=color_code
+                    )
+
                 for query_number, query in enumerate(benchmark_queries, 1):
                     self.logger.info(f"Running query {query_number} with {self.concurrency} concurrent executions...")
                     # Run each query multiple times
@@ -262,12 +310,12 @@ class BenchmarkRunner:
             finally:
                  # Ensure proper cleanup
                 self.connection_pools[vendor].close_all()
-                self.connectors[vendor].close() 
+                self.connectors[vendor].close()
 
             return vendor, csv_data
 
         with ThreadPoolExecutor(max_workers=len(self.vendors)) as executor:
-            future_to_vendor = {executor.submit(run_vendor_benchmark, vendor): vendor for vendor in self.vendors}
+            future_to_vendor = {executor.submit(run_vendor_benchmark, vendor, index): vendor for index, vendor in enumerate(self.vendors)}
             for future in as_completed(future_to_vendor):
                 vendor, csv_data = future.result()
                 if csv_data:
@@ -281,10 +329,6 @@ class BenchmarkRunner:
             # Use the CSV Exporter to export results
             csv_exporter = CSVExporter()
             csv_exporter.export(results, self.output_dir)
-
-            # Visual export
-            visual_exporter = VisualExporter(self.output_dir)
-            visual_exporter.export(results, self.output_dir)
 
         return results
 
