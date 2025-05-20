@@ -2,6 +2,9 @@
 config/credentials/*.json
 !config/credentials/example-credentials.json
 
+## Config
+config/k6config.json
+
 # Other standard Python ignores
 .DS_Store
 .venv
