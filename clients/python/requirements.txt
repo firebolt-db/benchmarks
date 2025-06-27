@@ -66,7 +66,7 @@ pytest-cov==6.0.0
 python-dateutil==2.9.0.post0
 pytz==2024.2
 readerwriterlock==1.0.9
-requests==2.32.3
+requests==2.32.4
 rsa==4.9
 s3transfer==0.10.3
 seaborn==0.13.2
