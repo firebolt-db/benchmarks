@@ -1,7 +1,7 @@
 {
     "vendor": "firebolt",
     "number_of_threads": 1,
-    "connections_per_thread": 25,
+    "connections_per_thread": 1,
     "duration": "5m",
-    "VUs": 25
+    "VUs": 1
 }

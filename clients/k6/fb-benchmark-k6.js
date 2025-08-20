@@ -1,7 +1,7 @@
 import http from "k6/http";
 import { sleep } from 'k6';
 
-import queriesFirebolt from '../../../poc-root/poc-customer-<>/FIREBOLT_FILES/SELECT/tuned/k6/queries.js';
+import queriesFirebolt from '../../../poc-root/poc-customer-/FIREBOLT_FILES/SELECT/tuned/k6/queries.js';
 import queriesSnowflake from '../../benchmarks/FireScale_k6/queries_snowflake.js';
 import queriesRedshift from '../../benchmarks/FireScale_k6/queries_redshift.js';
 
@@ -34,35 +34,32 @@ const API_URL = "http://localhost:3000/execute";  // Node.js API URL
 const HEALTH_URL = 'http://localhost:3000/health';
 
 export default function () {
-  // k6's built-in: __VU is the VU number (1-based)
-  // So each VU will be "1", "2", "3", etc.
-  const vuID = __VU;
-  const iter = __ITER;
+  const iter = __ITER; // round number
 
-  // 1) fixed mapping each round:
-  // const queryIndex = vuID - 1;
+  // Build one batch: 25 parallel requests (one per query)
+  const batch = [];
+  for (let queryIndex = 0; queryIndex < numQueryTypes; queryIndex++) {
+    const queryKey = queryTypes[queryIndex];
+    const queryList = queries[queryKey];
 
-  // 2) rotating mapping each round (recommended):
-  const queryIndex = (vuID - 1 + iter) % numQueryTypes;
+    // If your API accepts multi-statement SQL, keep it as-is; else pick the first statement.
+    const queryText = Array.isArray(queryList) ? queryList.join("\n") : String(queryList);
 
-  const queryKey = queryTypes[queryIndex];
-  const queryList = queries[queryKey];
+    // Synthetic vuID to preserve your payload schema (1..25)
+    const vuID = queryIndex + 1;
 
-  if (!Array.isArray(queryList) || queryList.length === 0) return;
+    const payload = JSON.stringify({ vuID, name: queryKey, query: queryText });
+    const params = { headers: { "Content-Type": "application/json" }, tags: { queryKey } };
+    batch.push(["POST", API_URL, payload, params]);
+  }
 
-  for (const queryText of queryList) {
-    // Include vuID in the request payload
-    const payload = JSON.stringify({
-      vuID,
-      query: queryText,
-    });
+  const responses = http.batch(batch);
 
-    // Make the request
-    const params = { headers: { "Content-Type": "application/json" } };
-    const res = http.post(API_URL, payload, params);
-
-    if (res.status !== 200) {
-      console.error(`🚨 Query failed (VU ${vuID}): ${res.body}`);
+  // Handle errors
+  for (let i = 0; i < responses.length; i++) {
+    if (responses[i].status !== 200) {
+      const queryKey = queryTypes[i];
+      console.error(`🚨 Query failed (round ${iter}, ${queryKey}): ${responses[i].status} ${responses[i].body}`);
     }
   }
 }
