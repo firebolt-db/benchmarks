@@ -1,7 +1,7 @@
 import http from "k6/http";
 import { sleep } from 'k6';
 
-import queriesFirebolt from '../../benchmarks/FireScale_k6/queries_firebolt.js';
+import queriesFirebolt from '../../../poc-root/poc-customer-<>/FIREBOLT_FILES/SELECT/tuned/k6/queries.js';
 import queriesSnowflake from '../../benchmarks/FireScale_k6/queries_snowflake.js';
 import queriesRedshift from '../../benchmarks/FireScale_k6/queries_redshift.js';
 
@@ -37,18 +37,20 @@ export default function () {
   // k6's built-in: __VU is the VU number (1-based)
   // So each VU will be "1", "2", "3", etc.
   const vuID = __VU;
+  const iter = __ITER;
 
-  // round-robin
-  const queryOrder = Array.from({ length: numQueryTypes }, (_, i) => (vuID + i) % numQueryTypes);
+  // 1) fixed mapping each round:
+  // const queryIndex = vuID - 1;
 
-  for (const queryIndex of queryOrder) {
-    const queryKey = queryTypes[queryIndex];
-    const queryList = queries[queryKey];
+  // 2) rotating mapping each round (recommended):
+  const queryIndex = (vuID - 1 + iter) % numQueryTypes;
 
-    if (queryList.length === 0) continue;
+  const queryKey = queryTypes[queryIndex];
+  const queryList = queries[queryKey];
 
-    const queryText = queryList.shift();
+  if (!Array.isArray(queryList) || queryList.length === 0) return;
 
+  for (const queryText of queryList) {
     // Include vuID in the request payload
     const payload = JSON.stringify({
       vuID,
