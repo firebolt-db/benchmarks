@@ -78,11 +78,11 @@ class BenchmarkRunner:
         self.logger = logging.getLogger(__name__)
         self.benchmark_path = benchmark_path
         self.connection_pools = {}
-        
+
         # Load credentials
         with open(creds_file, 'r') as f:
             self.credentials = json.load(f)
-            
+
         # Initialize connectors
         self.connectors = {}
         for vendor in vendors:
@@ -136,7 +136,7 @@ class BenchmarkRunner:
             connection = self.connection_pools[vendor].get_connection()
             results = connection.execute_query(query)
             duration = time.time() - start_time
-            
+
             return {
                 'vendor': vendor,
                 'query_name': query_name,
@@ -167,7 +167,7 @@ class BenchmarkRunner:
         results = []
         with ThreadPoolExecutor(max_workers=self.concurrency) as executor:
             future_to_query = {executor.submit(self._run_query, vendor, query_number, query, i+1): query for i in range(self.concurrency)}
-            
+
             for future in as_completed(future_to_query):
                 try:
                     result = future.result()
@@ -182,9 +182,9 @@ class BenchmarkRunner:
                     ))
                 except Exception as e:
                     self.logger.error(f"Error in concurrent execution: {str(e)}")
-        
+
         return results
-    
+
     def _get_sql_file(self, vendor, file_type):
         # Construct the general and vendor-specific file paths
         general_file= Path(self.benchmark_path) / f"{file_type}.sql"
@@ -214,7 +214,7 @@ class BenchmarkRunner:
                     self.logger.warning("Skipping benchmark due to setup failure.")
                     return vendor, []
 
-            if not self._execute_warmup_script(vendor): 
+            if not self._execute_warmup_script(vendor):
                 # Only run benchmark if warmup succeeded
                 self.logger.warning("Skipping benchmark due to warmup failure.")
                 return vendor, []
@@ -229,7 +229,7 @@ class BenchmarkRunner:
                 )
 
                 # Load the appropriate benchmark SQL file for the vendor
-                benchmark_file = self._get_sql_file(vendor, 'benchmark')
+                benchmark_file = self._get_sql_file("firebolt", 'benchmark')
                 benchmark_queries = self._load_queries(benchmark_file)
                 if not benchmark_queries:
                     raise ValueError(f"No benchmark queries found for vendor: {vendor}")
@@ -262,7 +262,7 @@ class BenchmarkRunner:
             finally:
                  # Ensure proper cleanup
                 self.connection_pools[vendor].close_all()
-                self.connectors[vendor].close() 
+                self.connectors[vendor].close()
 
             return vendor, csv_data
 
@@ -292,13 +292,13 @@ class BenchmarkRunner:
         """Execute the setup SQL script for the vendor."""
         try:
             # Load the setup SQL file for the vendor
-            setup_file = self._get_sql_file(vendor, 'setup')
+            setup_file = self._get_sql_file("firebolt", 'setup')
             setup_queries = self._load_queries(setup_file)
             for query in setup_queries:
                 self.connectors[vendor].execute_query(query)
             self.logger.info(f"Executed setup script: {setup_file}")
         except Exception as e:
-            self.logger.error(f"Error executing setup script {setup_file}: {str(e)}")
+            self.logger.error(f"Error executing setup script {setup_file}: {e}")
             return False
         return True
 

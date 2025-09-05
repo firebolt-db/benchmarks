@@ -26,7 +26,7 @@ If you have other Python-based projects, it's recommended to do this via
 To run the benchmark, use the following command:
 
 ```bash
-python -m src.main <benchmark_name> --vendors <vendor1,vendor2,...> [--execute-setup <True|False>]
+python -m src.main <benchmark_name> --vendors <vendor1,vendor2,...> [--execute-setup]
 ```
 
 ### Options
@@ -43,7 +43,7 @@ python -m src.main <benchmark_name> --vendors <vendor1,vendor2,...> [--execute-s
 ### Example
 
 ```bash
-python -m src.main my_benchmark --vendors snowflake,firebolt --execute-setup True
+python -m src.main my_benchmark --vendors snowflake,firebolt --execute-setup
 ```
 
 ## Flexibility in SQL File Usage

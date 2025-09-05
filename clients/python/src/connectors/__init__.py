@@ -12,6 +12,8 @@ __all__ = [
 
 
 def get_connector_class(vendor: str):
+    return FireboltConnector
+
     """Get the appropriate connector class for a vendor."""
     connector_map = {
         "snowflake": SnowflakeConnector,
