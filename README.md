@@ -91,6 +91,69 @@ Then run:
 
 This will ingest the data and then kick off an initial benchmark power run.
 
+## Run Custom Queries on Firebolt
+
+To run your own custom queries on Firebolt and get a performance report, follow these steps:
+
+### 1. Configure Firebolt Credentials
+
+Create `config/credentials/credentials.json` with your Firebolt credentials:
+
+```json
+{
+    "firebolt": {
+        "account_name": "your firebolt account name",
+        "database": "your_database",
+        "engine_name": "your_engine",
+        "auth": {
+            "id": "your firebolt service account id",
+            "secret": "your firebolt service account secret"
+        }
+    }
+}
+```
+
+### 2. Add Your Custom Queries
+
+Edit the file `benchmarks/custom/firebolt/benchmark.sql` and replace the example queries with your own. Each query should end with a semicolon (`;`). Comments starting with `--` are ignored.
+
+```sql
+-- Your custom queries go here
+SELECT * FROM your_table WHERE condition;
+
+SELECT COUNT(*) FROM another_table;
+```
+
+Optionally, edit `benchmarks/custom/firebolt/warmup.sql` to add warmup queries that run before the benchmark.
+
+### 3. Install Dependencies
+
+```bash
+cd clients/python
+pip install -r requirements.txt
+```
+
+### 4. Run the Benchmark
+
+```bash
+cd clients/python
+python -m src.main custom --vendors firebolt
+```
+
+### 5. View the Report
+
+Results are saved to the `benchmark_results/` directory by default. The output includes:
+- A CSV file with detailed timing for each query execution
+- Visual charts showing query performance
+
+You can customize the output directory with `--output-dir`:
+
+```bash
+python -m src.main custom --vendors firebolt --output-dir my_results
+```
+
+Each query runs 5 times by default to provide a distribution of execution times.
+
 ## Directory Structure
 
 ```
@@ -133,10 +196,15 @@ project-root/
 |   |   ├── queries_redshift.js
 |   |   └── queries_snowflake.js
 |   |
-|   └── tpch/
-|       ├── firebolt/
-|       |   └── benchmark.sql      # TPCH queries for Firebolt
-|       └── warmup.sql    # generic SQL warmup file for TPCH benchmark
+|   ├── tpch/
+|   |   ├── firebolt/
+|   |   |   └── benchmark.sql      # TPCH queries for Firebolt
+|   |   └── warmup.sql    # generic SQL warmup file for TPCH benchmark
+|   |
+|   └── custom/           # Custom benchmark for running your own queries
+|       └── firebolt/
+|           ├── benchmark.sql      # Add your custom queries here
+|           └── warmup.sql         # Optional warmup queries
 |
 ├── clients/
 │   ├── python/
